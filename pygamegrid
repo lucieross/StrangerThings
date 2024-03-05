@@ -15,13 +15,9 @@ while run:
     for event in pygame.event.get(): # iterate over the list of Event objects  that was returned by pygame.event.get() method.   
         if event.type == pygame.QUIT: # if event object type is QUIT then quitting the pygame and program both.it will make exit the while loop  
             run = False
-            win.fill((0, 0, 0)) #colour of game screen    
-            pygame.draw.rect(win, (255, 0, 0), (225, 75, 50, 50)) #cannon
-            pygame.draw.line(win, (255, 0, 0), [0, 125], [500, 125], 5) #dividing line
-            # it refreshes the window 
-            pygame.display.update() 
-
-    # it refreshes the window 
-
-    pygame.display.update()  
+    win.fill((0, 0, 0)) #colour of game screen    
+    pygame.draw.rect(win, (255, 0, 0), (225, 75, 50, 50)) #cannon
+    pygame.draw.line(win, (255, 0, 0), [0, 125], [500, 125], 5) #dividing line
+    # it refreshes the window 
+    pygame.display.update() 
 
