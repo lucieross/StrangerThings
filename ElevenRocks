@@ -38,9 +38,6 @@ rock_speed = 0.05
 #maxRocks = 5 #Sets the maximum number of rocks allowed
 
 def draw_eleven(x, y):
-    # Draw background color only over the old position of Eleven //Get Opinion
-    pygame.draw.rect(win, background_color, (x, y, 50, 50))
-
     # Draw Eleven at the updated position
     win.blit(Eleven_image, (x, y))
     
