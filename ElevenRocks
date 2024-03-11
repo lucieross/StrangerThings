@@ -27,6 +27,11 @@ lifecount = 3
 monsterwall = False
 rock_image = pygame.image.load("Image/rock.png")
 
+#List
+list = [0, 0, 0, 0, 0]
+eggoPosition = random.randint(0,4)
+list[eggoPosition] = 1
+print(list)
 
 #Rock Variables
 xrock = random.randint(10,490)
@@ -34,31 +39,32 @@ yrock = 0
 rocklist = []
 rock_speed = 0.05
 
-def draw_eleven(x, y):
-
-    # Draw Eleven at the updated position
-    win.blit(Eleven_image, (x, y))
-    
-
-
 def create_rock():
     scaled_rock = pygame.transform.scale(rock_image, (20, 20))
     win.blit(scaled_rock, (xrock, yrock))
     rock = pygame.Rect(xrock, yrock, 20, 20)
-    add_rock_list(rock)
-    
+  
     return rock
 
-
-def add_rock_list(rock):
-    rocklist.append(rock)
-    return rocklist
-
-
+def create_eggo():
+    eggo = pygame.draw.circle(win, (0, 255, 0), [xrock, yrock], 10, 0)#rock
  
+    return eggo
+
+#List
+rocklist = [0,0,0,0,0]
+
+eggoPosition = random.randint(0,4)
+rocklist[eggoPosition] = 1
+
+
+#eleven
+def draw_eleven(x, y):
+
+    # Draw Eleven at the updated position
+    win.blit(Eleven_image, (x, y))
 
 #Monster Variables
-
 xmonster = random.randint(10,490)
 ymonster = 500
 monsterlist = []
@@ -67,8 +73,6 @@ def create_monster():
     monster = pygame.draw.rect(win, (0, 255, 0), (xmonster, ymonster, 20, 50))#rock
     add_monster_list(monster)
     return monster
-
- 
 
 def add_monster_list(monster):
     monsterlist.append(monster)
@@ -92,24 +96,28 @@ while run:
             # it will make exit the while loop
             run = False
 
+    #screen setup
     win.fill((0, 0, 0))  # colour of the game screen
-
     pygame.draw.rect(win, (255, 0, 0), (225, 75, 50, 50))  # cannon
     pygame.draw.line(win, (255, 0, 0), [0, 125], [500, 125], 5)  # dividing line
 
-    # Move the rock
+    #Rock/Eggo
+    if rocklist[0] == 0:
+        create_rock()
+        if yrock <= 105:
+            yrock += rock_speed
 
-    rock = create_rock()
-    if yrock <= 105:
-        yrock += rock_speed
-
+    elif rocklist[0] == 1:
+        create_eggo()
+        if yrock <= 105:
+            yrock += rock_speed
 
     # Check for monster and Eleven collision
     if ymonster >= 125:
         monster = create_monster()
         ymonster -= 0.1  # later, do this as - level speed
 
-
+    #moving elevem
     keys = pygame.key.get_pressed()
 
     if keys[pygame.K_LEFT] and eleven_x - Eleven_speed > 0:  
@@ -117,10 +125,7 @@ while run:
     if keys[pygame.K_RIGHT] and eleven_x + Eleven_speed + 50 < win_width: 
         eleven_x += Eleven_speed
 
-    draw_eleven(eleven_x, eleven_y) 
-
-    # Draw the rock
-    
+    draw_eleven(eleven_x, eleven_y)  
 
     # Refresh the window
     pygame.display.update()
