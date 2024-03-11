@@ -1,0 +1,162 @@
+import random
+import pygame
+
+pygame.init() #activates pygame
+
+#pip install pygame in terminal to make it work
+
+win_width, win_height = 500, 500
+win = pygame.display.set_mode((500, 500)) #creates game screen
+pygame.display.set_caption("Stranger Things") #gives game a name
+
+run = True
+
+#Eleven Varibles
+Eleven_image_path = "Image/Eleven.png"
+Eleven_image = pygame.image.load(Eleven_image_path)
+Eleven_image = pygame.transform.scale(Eleven_image, (50, 50))
+background_color = (0, 0, 0)
+
+# Initial position of Eleven
+eleven_x = 225
+eleven_y = 75
+Eleven_speed = 0.25
+
+#General Variables
+lifecount = 3
+monsterwall = False
+rock_image = pygame.image.load("Image/rock.png")
+
+
+#Rock Variables
+xrock = random.randint(10,490)
+yrock = 0
+rocklist = []
+rock_speed = 0.05
+
+#collectedRocks = 0 #Sets the collected number of rocks
+#maxRocks = 5 #Sets the maximum number of rocks allowed
+
+def draw_eleven(x, y):
+    # Draw background color only over the old position of Eleven //Get Opinion
+    pygame.draw.rect(win, background_color, (x, y, 50, 50))
+
+    # Draw Eleven at the updated position
+    win.blit(Eleven_image, (x, y))
+    
+
+
+def create_rock():
+    scaled_rock = pygame.transform.scale(rock_image, (20, 20))
+    win.blit(scaled_rock, (xrock, yrock))
+    rock_rect = pygame.Rect(xrock, yrock, 20, 20)
+    add_rock_list(rock_rect)
+    
+    return rock_rect
+
+
+def add_rock_list(rock):
+    rocklist.append(rock)
+    return rocklist
+    
+"""def collectRocks(xrock, yrock, eleven_x, eleven_y):
+    global collectedRocks 
+
+    # Check if the rock's x and y coordinates match Eleven's position
+    if xrock == eleven_x and yrock == eleven_y:
+        collectedRocks += 1
+        
+    print("Collected Rocks:", collectedRocks)
+    return collectedRocks"""
+
+
+ 
+
+#Monster Variables
+
+xmonster = random.randint(10,490)
+ymonster = 500
+monsterlist = []
+
+def create_monster():
+    monster = pygame.draw.rect(win, (0, 255, 0), (xmonster, ymonster, 20, 50))#rock
+    add_monster_list(monster)
+    return monster
+
+ 
+
+def add_monster_list(monster):
+    monsterlist.append(monster)
+
+#attempt at lives system
+
+def lifelost():
+    global lifecount, monsterwall  # Declare global variables
+
+    if monsterwall == True:
+        lifecount -= 1
+        monsterwall = False  # Reset monsterwall after decrementing lifecount
+        print("Lives left:", lifecount)
+        return lifecount
+
+run = True #Indicates pygame is running
+
+# infinite loop when game is active
+
+while run:
+    # iterate over the list of Event objects
+    # that was returned by pygame.event.get() method.
+
+    for event in pygame.event.get():
+        # if event object type is QUIT
+        # then quitting the pygame
+        # and program both.
+
+        if event.type == pygame.QUIT:
+            # it will make exit the while loop
+            run = False
+
+    win.fill((0, 0, 0))  # colour of the game screen
+
+    pygame.draw.rect(win, (255, 0, 0), (225, 75, 50, 50))  # cannon
+    pygame.draw.line(win, (255, 0, 0), [0, 125], [500, 125], 5)  # dividing line
+
+    # Move the rock
+    yrock += rock_speed
+    if yrock >= 125:
+        yrock = 0
+        xrock = random.randint(10, 490)
+
+    # Check for rock and Eleven collision //WIP
+    #if (eleven_x < xrock  and eleven_x + 50 > yrock and eleven_y < yrock + 20 and eleven_y + 50 > yrock):
+    #    collectRocks(xrock, yrock, eleven_x, eleven_y)
+    #   collectedRocks += 1
+
+    # Check for monster and Eleven collision
+    if ymonster >= 110:
+        monster = create_monster()
+        ymonster -= 0.2  # later, do this as - level speed
+
+        # Check for collision with Eleven
+        if (
+            eleven_x < xmonster + 20
+            and eleven_x + 50 > xmonster
+            and eleven_y < ymonster + 50
+            and eleven_y + 50 > ymonster
+        ):
+            lifelost()
+
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_LEFT] and eleven_x - Eleven_speed > 0:  
+        eleven_x -= Eleven_speed
+    if keys[pygame.K_RIGHT] and eleven_x + Eleven_speed + 50 < win_width: 
+        eleven_x += Eleven_speed
+
+    draw_eleven(eleven_x, eleven_y) 
+
+    # Draw the rock
+    create_rock()
+
+    # Refresh the window
+    pygame.display.update()
