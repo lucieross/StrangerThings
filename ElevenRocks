@@ -34,10 +34,8 @@ yrock = 0
 rocklist = []
 rock_speed = 0.05
 
-#collectedRocks = 0 #Sets the collected number of rocks
-#maxRocks = 5 #Sets the maximum number of rocks allowed
-
 def draw_eleven(x, y):
+
     # Draw Eleven at the updated position
     win.blit(Eleven_image, (x, y))
     
@@ -46,25 +44,15 @@ def draw_eleven(x, y):
 def create_rock():
     scaled_rock = pygame.transform.scale(rock_image, (20, 20))
     win.blit(scaled_rock, (xrock, yrock))
-    rock_rect = pygame.Rect(xrock, yrock, 20, 20)
-    add_rock_list(rock_rect)
+    rock = pygame.Rect(xrock, yrock, 20, 20)
+    add_rock_list(rock)
     
-    return rock_rect
+    return rock
 
 
 def add_rock_list(rock):
     rocklist.append(rock)
     return rocklist
-    
-"""def collectRocks(xrock, yrock, eleven_x, eleven_y):
-    global collectedRocks 
-
-    # Check if the rock's x and y coordinates match Eleven's position
-    if xrock == eleven_x and yrock == eleven_y:
-        collectedRocks += 1
-        
-    print("Collected Rocks:", collectedRocks)
-    return collectedRocks"""
 
 
  
@@ -86,15 +74,6 @@ def add_monster_list(monster):
     monsterlist.append(monster)
 
 #attempt at lives system
-
-def lifelost():
-    global lifecount, monsterwall  # Declare global variables
-
-    if monsterwall == True:
-        lifecount -= 1
-        monsterwall = False  # Reset monsterwall after decrementing lifecount
-        print("Lives left:", lifecount)
-        return lifecount
 
 run = True #Indicates pygame is running
 
@@ -119,29 +98,17 @@ while run:
     pygame.draw.line(win, (255, 0, 0), [0, 125], [500, 125], 5)  # dividing line
 
     # Move the rock
-    yrock += rock_speed
-    if yrock >= 125:
-        yrock = 0
-        xrock = random.randint(10, 490)
 
-    # Check for rock and Eleven collision //WIP
-    #if (eleven_x < xrock  and eleven_x + 50 > yrock and eleven_y < yrock + 20 and eleven_y + 50 > yrock):
-    #    collectRocks(xrock, yrock, eleven_x, eleven_y)
-    #   collectedRocks += 1
+    rock = create_rock()
+    if yrock <= 105:
+        yrock += rock_speed
+
 
     # Check for monster and Eleven collision
-    if ymonster >= 110:
+    if ymonster >= 125:
         monster = create_monster()
-        ymonster -= 0.2  # later, do this as - level speed
+        ymonster -= 0.1  # later, do this as - level speed
 
-        # Check for collision with Eleven
-        if (
-            eleven_x < xmonster + 20
-            and eleven_x + 50 > xmonster
-            and eleven_y < ymonster + 50
-            and eleven_y + 50 > ymonster
-        ):
-            lifelost()
 
     keys = pygame.key.get_pressed()
 
@@ -153,7 +120,7 @@ while run:
     draw_eleven(eleven_x, eleven_y) 
 
     # Draw the rock
-    create_rock()
+    
 
     # Refresh the window
     pygame.display.update()
