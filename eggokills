@@ -11,28 +11,37 @@ pygame.display.set_caption("Stranger Things") #gives game a name
 
 run = True
 
+#General Variables
+lifecount = 3
+monsterwall = False
+rock_image = pygame.image.load("Image/rock.png")
+
+# Font
+font = pygame.font.SysFont(None, 30)
+
 #Eleven Varibles
 Eleven_image_path = "Image/Eleven.png"
 Eleven_image = pygame.image.load(Eleven_image_path)
 Eleven_image = pygame.transform.scale(Eleven_image, (50, 50))
 background_color = (0, 0, 0)
 
+#Draw eleven
+def draw_eleven(x, y):
+
+    # Draw Eleven at the updated position
+    win.blit(Eleven_image, (x, y))
+
 # Initial position of Eleven
 eleven_x = 225
 eleven_y = 75
 Eleven_speed = 0.25
-
-#General Variables
-lifecount = 3
-monsterwall = False
-rock_image = pygame.image.load("Image/rock.png")
 
 #Rock Variables
 xrock = random.randint(10,490)
 yrock = 0
 rocklist = []
 rock_speed = 0.05
-rock_collected = 0  
+rock_collected = 0
 
 def create_rock():
     scaled_rock = pygame.transform.scale(rock_image, (20, 20))
@@ -46,53 +55,52 @@ def create_eggo():
  
     return eggo
 
-#List
+#Rock list
 rocklist = [0,0,0,0,0,0,0,0,0,0]
-eggoPosition = random.randint(0,9)
+eggoPosition = random.randint(0,9) # 1 eggo and 9 rocks in list
 rocklist[eggoPosition] = 1
 collectedEggo = False
-
-# Font
-font = pygame.font.SysFont(None, 30)
-
-#eleven
-def draw_eleven(x, y):
-
-    # Draw Eleven at the updated position
-    win.blit(Eleven_image, (x, y))
+rocklistPosition = 0
 
 #Monster Variables
-monstercount = 0
-monsterlist = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 monstertimer = 0
+
 xmonster1 = random.randint(10,490)
 ymonster1 = 500
+
 def create_monster1():
-    monster = pygame.draw.rect(win, (0, 0, 255), (xmonster1, ymonster1, 20, 50))#rock
+    monster = pygame.draw.rect(win, (0, 0, 255), (xmonster1, ymonster1, 20, 50))
 
     return monster
 
 xmonster2 = random.randint(10,490)
 ymonster2 = 500
 def create_monster2():
-    monster = pygame.draw.rect(win, (255, 0, 0), (xmonster2, ymonster2, 20, 50))#rock
+    monster = pygame.draw.rect(win, (255, 0, 0), (xmonster2, ymonster2, 20, 50))
 
     return monster
 
 xmonster3 = random.randint(10,490)
 ymonster3 = 500
 def create_monster3():
-    monster = pygame.draw.rect(win, (0, 255, 0), (xmonster3, ymonster3, 20, 50))#rock
+    monster = pygame.draw.rect(win, (0, 255, 0), (xmonster3, ymonster3, 20, 50))
     return monster
 
-monsterlist = []
+xdemogorgon = random.randint(10,490)
+ydemogorgon = 500
+def create_demogorgon():
+    monster = pygame.draw.rect(win, (0, 255, 0), (xdemogorgon, ydemogorgon, 50, 50))
+    return monster
 
-def add_monster_list(monster):
-    monsterlist.append(monster)
+#Monster list
+monsterlist = [0, 0, 0, 0, 0]
+demogorgonPosition = random.randint(0,4) #4 normal monsters and 1 demogorgon in list
+monsterlist[demogorgonPosition] = 1
+ifDemogorgon = False
+monsterlistPosition = 0
 
 #Level
-    
-level = 3
+level = 1
 
 run = True #Indicates pygame is running
 
@@ -121,42 +129,46 @@ while run:
     win.blit(text, (10, 10))
 
 # Check for rock collection
-    if rocklist[0] == 0:
+    if rocklist[rocklistPosition] == 0:
         create_rock()
         ifEggo = False
-        if yrock <= 105:
+        if yrock <= 105: #if above wall, move rock down
             yrock += rock_speed
 
-    elif rocklist[0] == 1:
+    elif rocklist[rocklistPosition] == 1:
         create_eggo()
         ifEggo = True
-        if yrock <= 105:
+        if yrock <= 105: #if above wall, move rock down
             yrock += rock_speed
+
+    if rocklistPosition == 9: #resets list when the end is reached
+        rocklist = [0,0,0,0,0,0,0,0,0,0]
+        eggoPosition = random.randint(0,9)
+        rocklist[eggoPosition] = 1
+        rocklistPosition = 0
+            
 
 # Check if Eleven collects the rock
     if yrock >= 75 and yrock <= 125:  
         if eleven_x <= xrock <= eleven_x + 50:  
             if ifEggo == True:       
-                                    # Add onw to the number of rocks collected
                     print("Eggo Collected!")
-                    # Reset the rock position to fall another one
+                    # Reset the rock position to make another fall
                     xrock = random.randint(10, 490)
                     yrock = 0
-                    rocklist = [0,0,0,0,0,0,0,0,0,0]  # Reset the rocklist
-                    eggoPosition = random.randint(0, 9)
-                    rocklist[eggoPosition] = 1
+                    rocklist[rocklistPosition]
+                    rocklistPosition += 1 # Iterate through rocklist
                     collectedEggo = True
             if rock_collected < 5 and ifEggo == False:  # Check if Eleven has collected less than 5 rocks
-                rock_collected += 1 # Add onw to the number of rocks collected
+                rock_collected += 1 # Add on to the number of rocks collected
                 print("Rock collected:", rock_collected)
-                # Reset the rock position to fall another one
+                # Reset the rock position to make another fall
                 xrock = random.randint(10, 490)
                 yrock = 0
-                rocklist = [0,0,0,0,0,0,0,0,0,0]  # Reset the rocklist
-                eggoPosition = random.randint(0, 9)
-                rocklist[eggoPosition] = 1
+                rocklistPosition += 1
+                rocklist[rocklistPosition] # Iterate through rocklist
 
-    if collectedEggo == True:
+    if collectedEggo == True: #resets all monsters
         ymonster1 = 500
         xmonster1 = random.randint(10,490)
         ymonster2 = 500
@@ -168,19 +180,25 @@ while run:
 
 # Monster 1 spawn
 
-    if ymonster1 >= 125 and monstertimer >= 0 and level >= 1:
-        monster1 = create_monster1() 
+    if ymonster1 >= 125 and monstertimer >= 0 and level >= 1 and monsterlist[monsterlistPosition] == 0:
+        monster1 = create_monster1()
+        ymonster1 -= 0.07  # later, do this as - level speed
+        monstertimer += 0.07 # takes approx. 375 to get to line
+    elif ymonster1 >= 125 and monstertimer >= 0 and level >= 1 and monsterlist[monsterlistPosition] == 1:
+        demogorgon = create_demogorgon()
+        ydemogorgon = ymonster1
         ymonster1 -= 0.07  # later, do this as - level speed
         monstertimer += 0.07 # takes approx. 375 to get to line
     else:
         ymonster1 = 500
         xmonster1 = random.randint(10,490)
         monstertimer += 0.07
-        print(monstertimer)
+        monsterlistPosition += 1
+
 
 # Monster 2 spawn
 
-    if ymonster2 >= 125 and monstertimer >= 187.5 and level == 2 or ymonster2 >= 125 and monstertimer >= 125 and level == 3: #monster timer being different for different levels allows monsters to be evenly spaced
+    if ymonster2 >= 125 and monstertimer >= 187.5 and level >= 3 and level <= 4 or ymonster2 >= 125 and monstertimer >= 125 and level == 5: #monster timer being different for different levels allows monsters to be evenly spaced
         monster2 = create_monster2() 
         ymonster2 -= 0.07  # later, do this as - level speed
         
@@ -190,12 +208,18 @@ while run:
 
 # Monster 3 spawn
 
-    if ymonster3 >= 125 and monstertimer >= 250 and level == 3:
+    if ymonster3 >= 125 and monstertimer >= 250 and level == 5:
         monster3 = create_monster3() 
         ymonster3 -= 0.07  # later, do this as - level speed
     else:
         ymonster3 = 500
         xmonster3 = random.randint(10,490)
+
+    if monsterlistPosition == 4: #resets list when the end is reached
+        monsterlist = [0, 0, 0, 0, 0]
+        demogorgonPosition = random.randint(0,4) #4 normal monsters and 1 demogorgon in list
+        monsterlist[demogorgonPosition] = 1
+        monsterlistPosition = 0
 
 #moving eleven
     keys = pygame.key.get_pressed()
