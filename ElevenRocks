@@ -27,17 +27,15 @@ lifecount = 3
 monsterwall = False
 rock_image = pygame.image.load("Image/rock.png")
 
-#List
-list = [0, 0, 0, 0, 0]
-eggoPosition = random.randint(0,4)
-list[eggoPosition] = 1
-print(list)
-
 #Rock Variables
 xrock = random.randint(10,490)
 yrock = 0
 rocklist = []
 rock_speed = 0.05
+rock_collected = 0  
+
+# Font
+font = pygame.font.SysFont(None, 30)
 
 def create_rock():
     scaled_rock = pygame.transform.scale(rock_image, (20, 20))
@@ -52,9 +50,8 @@ def create_eggo():
     return eggo
 
 #List
-rocklist = [0,0,0,0,0]
-
-eggoPosition = random.randint(0,4)
+rocklist = [0,0,0,0,0,0,0,0,0,0]
+eggoPosition = random.randint(0,9)
 rocklist[eggoPosition] = 1
 
 
@@ -77,7 +74,9 @@ def create_monster():
 def add_monster_list(monster):
     monsterlist.append(monster)
 
-#attempt at lives system
+#Level
+    
+level = 3
 
 run = True #Indicates pygame is running
 
@@ -101,20 +100,48 @@ while run:
     pygame.draw.rect(win, (255, 0, 0), (225, 75, 50, 50))  # cannon
     pygame.draw.line(win, (255, 0, 0), [0, 125], [500, 125], 5)  # dividing line
 
-    #Rock/Eggo
+    # Render text for collected rocks
+    text = font.render("Rocks Collected: " + str(rock_collected), True, (255, 255, 255))
+    win.blit(text, (10, 10))
+
+    # Check for rock collection
     if rocklist[0] == 0:
         create_rock()
+        ifEggo = False
         if yrock <= 105:
             yrock += rock_speed
 
     elif rocklist[0] == 1:
         create_eggo()
+        ifEggo = True
         if yrock <= 105:
             yrock += rock_speed
 
+    # Check if Eleven collects the rock
+    if yrock >= 75 and yrock <= 125:  
+        if eleven_x <= xrock <= eleven_x + 50:  
+            if ifEggo == True:       
+                                    # Add onw to the number of rocks collected
+                    print("Eggo Collected!")
+                    # Reset the rock position to fall another one
+                    xrock = random.randint(10, 490)
+                    yrock = 0
+                    rocklist = [0,0,0,0,0,0,0,0,0,0]  # Reset the rocklist
+                    eggoPosition = random.randint(0, 9)
+                    rocklist[eggoPosition] = 1
+            if rock_collected < 5 and ifEggo == False:  # Check if Eleven has collected less than 5 rocks
+                rock_collected += 1 # Add onw to the number of rocks collected
+                print("Rock collected:", rock_collected)
+                # Reset the rock position to fall another one
+                xrock = random.randint(10, 490)
+                yrock = 0
+                rocklist = [0,0,0,0,0,0,0,0,0,0]  # Reset the rocklist
+                eggoPosition = random.randint(0, 9)
+                rocklist[eggoPosition] = 1
+
     # Check for monster and Eleven collision
     if ymonster >= 125:
-        monster = create_monster()
+        monster1 = create_monster()
         ymonster -= 0.1  # later, do this as - level speed
 
     #moving elevem
