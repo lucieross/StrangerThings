@@ -1,0 +1,211 @@
+import random
+import pygame
+
+pygame.init() #activates pygame
+
+#pip install pygame in terminal to make it work
+
+win_width, win_height = 500, 500
+win = pygame.display.set_mode((500, 500)) #creates game screen
+pygame.display.set_caption("Stranger Things") #gives game a name
+
+run = True
+
+#Eleven Varibles
+Eleven_image_path = "Image/Eleven.png"
+Eleven_image = pygame.image.load(Eleven_image_path)
+Eleven_image = pygame.transform.scale(Eleven_image, (50, 50))
+background_color = (0, 0, 0)
+
+# Initial position of Eleven
+eleven_x = 225
+eleven_y = 75
+Eleven_speed = 0.25
+
+#General Variables
+lifecount = 3
+monsterwall = False
+rock_image = pygame.image.load("Image/rock.png")
+
+#Rock Variables
+xrock = random.randint(10,490)
+yrock = 0
+rocklist = []
+rock_speed = 0.05
+rock_collected = 0  
+
+def create_rock():
+    scaled_rock = pygame.transform.scale(rock_image, (20, 20))
+    win.blit(scaled_rock, (xrock, yrock))
+    rock = pygame.Rect(xrock, yrock, 20, 20)
+  
+    return rock
+
+def create_eggo():
+    eggo = pygame.draw.circle(win, (0, 255, 0), [xrock, yrock], 10, 0)#rock
+ 
+    return eggo
+
+#List
+rocklist = [0,0,0,0,0,0,0,0,0,0]
+eggoPosition = random.randint(0,9)
+rocklist[eggoPosition] = 1
+collectedEggo = False
+
+# Font
+font = pygame.font.SysFont(None, 30)
+
+#eleven
+def draw_eleven(x, y):
+
+    # Draw Eleven at the updated position
+    win.blit(Eleven_image, (x, y))
+
+#Monster Variables
+monstercount = 0
+monsterlist = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+monstertimer = 0
+xmonster1 = random.randint(10,490)
+ymonster1 = 500
+def create_monster1():
+    monster = pygame.draw.rect(win, (0, 0, 255), (xmonster1, ymonster1, 20, 50))#rock
+
+    return monster
+
+xmonster2 = random.randint(10,490)
+ymonster2 = 500
+def create_monster2():
+    monster = pygame.draw.rect(win, (255, 0, 0), (xmonster2, ymonster2, 20, 50))#rock
+
+    return monster
+
+xmonster3 = random.randint(10,490)
+ymonster3 = 500
+def create_monster3():
+    monster = pygame.draw.rect(win, (0, 255, 0), (xmonster3, ymonster3, 20, 50))#rock
+    return monster
+
+monsterlist = []
+
+def add_monster_list(monster):
+    monsterlist.append(monster)
+
+#Level
+    
+level = 3
+
+run = True #Indicates pygame is running
+
+# infinite loop when game is active
+
+while run:
+    # iterate over the list of Event objects
+    # that was returned by pygame.event.get() method.
+
+    for event in pygame.event.get():
+        # if event object type is QUIT
+        # then quitting the pygame
+        # and program both.
+
+        if event.type == pygame.QUIT:
+            # it will make exit the while loop
+            run = False
+
+#screen setup
+    win.fill((0, 0, 0))  # colour of the game screen
+    pygame.draw.rect(win, (255, 0, 0), (225, 75, 50, 50))  # cannon
+    pygame.draw.line(win, (255, 0, 0), [0, 125], [500, 125], 5)  # dividing line
+
+# Render text for collected rocks
+    text = font.render("Rocks Collected: " + str(rock_collected), True, (255, 255, 255))
+    win.blit(text, (10, 10))
+
+# Check for rock collection
+    if rocklist[0] == 0:
+        create_rock()
+        ifEggo = False
+        if yrock <= 105:
+            yrock += rock_speed
+
+    elif rocklist[0] == 1:
+        create_eggo()
+        ifEggo = True
+        if yrock <= 105:
+            yrock += rock_speed
+
+# Check if Eleven collects the rock
+    if yrock >= 75 and yrock <= 125:  
+        if eleven_x <= xrock <= eleven_x + 50:  
+            if ifEggo == True:       
+                                    # Add onw to the number of rocks collected
+                    print("Eggo Collected!")
+                    # Reset the rock position to fall another one
+                    xrock = random.randint(10, 490)
+                    yrock = 0
+                    rocklist = [0,0,0,0,0,0,0,0,0,0]  # Reset the rocklist
+                    eggoPosition = random.randint(0, 9)
+                    rocklist[eggoPosition] = 1
+                    collectedEggo = True
+            if rock_collected < 5 and ifEggo == False:  # Check if Eleven has collected less than 5 rocks
+                rock_collected += 1 # Add onw to the number of rocks collected
+                print("Rock collected:", rock_collected)
+                # Reset the rock position to fall another one
+                xrock = random.randint(10, 490)
+                yrock = 0
+                rocklist = [0,0,0,0,0,0,0,0,0,0]  # Reset the rocklist
+                eggoPosition = random.randint(0, 9)
+                rocklist[eggoPosition] = 1
+
+    if collectedEggo == True:
+        ymonster1 = 500
+        xmonster1 = random.randint(10,490)
+        ymonster2 = 500
+        xmonster2 = random.randint(10,490)
+        ymonster3 = 500
+        xmonster3 = random.randint(10,490)
+        monstertimer = 0
+        collectedEggo = False
+
+# Monster 1 spawn
+
+    if ymonster1 >= 125 and monstertimer >= 0 and level >= 1:
+        monster1 = create_monster1() 
+        ymonster1 -= 0.07  # later, do this as - level speed
+        monstertimer += 0.07 # takes approx. 375 to get to line
+    else:
+        ymonster1 = 500
+        xmonster1 = random.randint(10,490)
+        monstertimer += 0.07
+        print(monstertimer)
+
+# Monster 2 spawn
+
+    if ymonster2 >= 125 and monstertimer >= 187.5 and level == 2 or ymonster2 >= 125 and monstertimer >= 125 and level == 3: #monster timer being different for different levels allows monsters to be evenly spaced
+        monster2 = create_monster2() 
+        ymonster2 -= 0.07  # later, do this as - level speed
+        
+    else:
+        ymonster2 = 500
+        xmonster2 = random.randint(10,490)
+
+# Monster 3 spawn
+
+    if ymonster3 >= 125 and monstertimer >= 250 and level == 3:
+        monster3 = create_monster3() 
+        ymonster3 -= 0.07  # later, do this as - level speed
+    else:
+        ymonster3 = 500
+        xmonster3 = random.randint(10,490)
+
+#moving eleven
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_LEFT] and eleven_x - Eleven_speed > 0:  
+        eleven_x -= Eleven_speed
+    if keys[pygame.K_RIGHT] and eleven_x + Eleven_speed + 50 < win_width: 
+        eleven_x += Eleven_speed
+
+    draw_eleven(eleven_x, eleven_y)  
+
+# Refresh the window
+    pygame.display.update()
