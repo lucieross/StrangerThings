@@ -32,6 +32,7 @@ lifecount = 3
 monsterwall = False
 rock_image = pygame.image.load("Image/rock.png")
 ywall = 125
+score = 0
 
 #Eleven Varibles
 Eleven_image_path = "Image/Eleven.png"
@@ -209,20 +210,49 @@ def check_collisions():
             if monster.colliderect(pygame.Rect(projectile[0] - projectile_radius, projectile[1] - projectile_radius, projectile_radius * 2, projectile_radius * 2)):
                 monsterlist1.remove(monster)
                 projectiles.remove(projectile)
+                score += 1
     for monster in monsterlist2[:]:
         for projectile in projectiles[:]:
             if monster.colliderect(pygame.Rect(projectile[0] - projectile_radius, projectile[1] - projectile_radius, projectile_radius * 2, projectile_radius * 2)):
                 monsterlist2.remove(monster)
                 projectiles.remove(projectile)
+                score += 1
     for monster in monsterlist3[:]:
         for projectile in projectiles[:]:
             if monster.colliderect(pygame.Rect(projectile[0] - projectile_radius, projectile[1] - projectile_radius, projectile_radius * 2, projectile_radius * 2)):
                 monsterlist3.remove(monster)
                 projectiles.remove(projectile)
+                score += 1
+
+
+# Function to display a 'game over' text for a few seconds
+def show_game_over():
+    game_over_text = font.render("GAME OVER!", True, (255,0,0))
+    text_rect = game_over_text.get_rect(center=(win_width // 2, win_height // 2))
+    win.blit(game_over_text, text_rect)
+    pygame.display.flip()
+    pygame.time.delay(3000)
+
+# Function to display a 'you won' text if game is finished
+def show_you_won():
+    you_won_text = font.render("CONGRATULATIONS, YOU WON!", True, (255,0,0))
+    text_rect = you_won_text.get_rect(center=(win_width // 2, win_height // 2))
+    win.blit(you_won_text, text_rect)
+    pygame.display.flip()
+    pygame.time.delay(3000)
+
+# Function to display a 'level is completed' text
+def level_is_completed():
+    level_completed_text = font.render("LEVEL IS COMPLETED", True, (255,0,0))
+    text_rect = level_completed_text.get_rect(center=(win_width // 2, win_height // 2))
+    win.blit(level_completed_text, text_rect)
+    pygame.display.flip()
+    pygame.time.delay(3000)   
+
 
 
 #Level
-level = 5
+level = 1
 
 run = True #Indicates pygame is running
 #clock = pygame.time.Clock()
@@ -269,6 +299,14 @@ while run:
 # Render text for collected rocks
     text = font.render("Rocks Collected: " + str(rock_collected), True, (255, 255, 255))
     win.blit(text, (2, 0))
+
+# Render text for level
+    level_text = font.render("Level: " + str(level), True, (255, 255, 255))
+    win.blit(level_text, (425, 0))
+
+# Render text for life counter
+    life_text = font.render("Lives: " + str(lifecount), True, (255, 255, 255))
+    win.blit(life_text, (425,20))
 
 # Check for rock collection
     if rocklist[rocklistPosition] == 0:
@@ -340,6 +378,7 @@ while run:
 
     if math.floor(ymonster1) == ywall:
         monsterlistPosition1 += 1
+        lifecount -= 1
 
     
 # Monster 2 spawn
@@ -353,6 +392,7 @@ while run:
 
     if math.floor(ymonster2) == ywall:
             monsterlistPosition2 += 1
+            lifecount -= 1
         
 
 # Monster 3 spawn
@@ -366,6 +406,7 @@ while run:
 
     if math.floor(ymonster3) == ywall:
             monsterlistPosition3 += 1
+            lifecount -= 1
         
 
 #Reset List
@@ -400,6 +441,29 @@ while run:
         eleven_x += Eleven_speed
 
     draw_eleven(eleven_x, eleven_y)  
+
+# Changing levels
+    if (score > 0) & (score % (level*5) == 0):
+        #if game is finished, display a you won text then reset the game
+        if level == 5:
+            show_you_won()
+            lifecount = 3
+            score = 0
+            rock_collected = 0
+            level = 1
+
+        level_is_completed()
+        level += 1
+        lifecount += 1
+        score = 0 
+
+# Resets the game 
+    if lifecount<=0:
+        show_game_over()
+        lifecount = 3
+        score = 0
+        rock_collected = 0
+        level = 1
 
 # Refresh the window
     pygame.display.update()
