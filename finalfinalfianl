@@ -209,7 +209,7 @@ def show_game_over():
 level = 1
 
 if level == 1 or level == 2:
-    monsterspeed = 0.9
+    monsterspeed = 0.3
 elif level == 3 or level == 4:
     monsterspeed = 1.5
 elif level == 5:
