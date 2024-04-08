@@ -29,10 +29,11 @@ eggo_skin = pygame.image.load('Image/eggo.png')
 
 #General Variables
 lifecount = 3
+killcount = 0
 monsterwall = False
 rock_image = pygame.image.load("Image/rock.png")
 ywall = 125
-score = 0
+
 
 #Eleven Varibles
 Eleven_image_path = "Image/Eleven.png"
@@ -210,19 +211,19 @@ def check_collisions():
             if monster.colliderect(pygame.Rect(projectile[0] - projectile_radius, projectile[1] - projectile_radius, projectile_radius * 2, projectile_radius * 2)):
                 monsterlist1.remove(monster)
                 projectiles.remove(projectile)
-                score += 1
+                killcount += 1
     for monster in monsterlist2[:]:
         for projectile in projectiles[:]:
             if monster.colliderect(pygame.Rect(projectile[0] - projectile_radius, projectile[1] - projectile_radius, projectile_radius * 2, projectile_radius * 2)):
                 monsterlist2.remove(monster)
                 projectiles.remove(projectile)
-                score += 1
+                killcount += 1
     for monster in monsterlist3[:]:
         for projectile in projectiles[:]:
             if monster.colliderect(pygame.Rect(projectile[0] - projectile_radius, projectile[1] - projectile_radius, projectile_radius * 2, projectile_radius * 2)):
                 monsterlist3.remove(monster)
                 projectiles.remove(projectile)
-                score += 1
+                killcount += 1
 
 
 # Function to display a 'game over' text for a few seconds
@@ -299,6 +300,10 @@ while run:
 # Render text for collected rocks
     text = font.render("Rocks Collected: " + str(rock_collected), True, (255, 255, 255))
     win.blit(text, (2, 0))
+
+# Render text for killcount
+    kill_text = font.render("Kill Count: " + str(killcount), True, (255, 255, 255))
+    win.blit(kill_text, (2, 40))
 
 # Render text for level
     level_text = font.render("Level: " + str(level), True, (255, 255, 255))
@@ -443,25 +448,25 @@ while run:
     draw_eleven(eleven_x, eleven_y)  
 
 # Changing levels
-    if (score > 0) & (score % (level*5) == 0):
+    if (killcount > 0) & (killcount % (level*5) == 0):
         #if game is finished, display a you won text then reset the game
         if level == 5:
             show_you_won()
             lifecount = 3
-            score = 0
+            killcount = 0
             rock_collected = 0
             level = 1
 
         level_is_completed()
         level += 1
         lifecount += 1
-        score = 0 
+        killcount = 0 
 
 # Resets the game 
     if lifecount<=0:
         show_game_over()
         lifecount = 3
-        score = 0
+        killcount = 0
         rock_collected = 0
         level = 1
 
