@@ -153,9 +153,7 @@ xmonster1 = random.randint(10,490)
 ymonster1 = 500
 
 def create_monster1():
-    #monster = pygame.draw.rect(win, (0, 0, 255), (xmonster1, ymonster1, 20, 50))
     if monsterlist1[monsterlistPosition1] == 1:
-        #monster = pygame.draw.rect(win, (0, 0, 255), (xmonster1, ymonster1, 50, 50))
         scaled_demo = pygame.transform.scale(demo_skin, (43,60))
         monster = win.blit(scaled_demo, (xmonster1, ymonster1))
     else:
@@ -167,9 +165,7 @@ def create_monster1():
 xmonster2 = random.randint(10,490)
 ymonster2 = 500
 def create_monster2():
-    #monster = pygame.draw.rect(win, (255, 0, 0), (xmonster2, ymonster2, 20, 50))
     if monsterlist2[monsterlistPosition2] == 1:
-        #monster = pygame.draw.rect(win, (255, 0, 0), (xmonster2, ymonster2, 50, 50))
         scaled_demo = pygame.transform.scale(demo_skin, (43,60))
         monster = win.blit(scaled_demo, (xmonster2, ymonster2))
     else:
@@ -181,9 +177,7 @@ def create_monster2():
 xmonster3 = random.randint(10,490)
 ymonster3 = 500
 def create_monster3():
-    #monster = pygame.draw.rect(win, (0, 255, 0), (xmonster3, ymonster3, 20, 50))
     if monsterlist3[monsterlistPosition3] == 1:
-        #monster = pygame.draw.rect(win, (0, 255, 0), (xmonster3, ymonster3, 50, 50))
         scaled_demo = pygame.transform.scale(demo_skin, (43,60))
         monster = win.blit(scaled_demo, (xmonster3, ymonster3)) 
     else:
@@ -197,7 +191,6 @@ ydemogorgon = 500
 def create_demogorgon():
     scaled_demo = pygame.transform.scale(demo_skin, (60,43))
     monster = win.blit(scaled_demo, (xdemogorgon, ydemogorgon))
-    #monster = pygame.draw.rect(win, (0, 255, 0), (xdemogorgon, ydemogorgon, 50, 50))
     return monster
 
 #lives system variables and fiunctions
@@ -246,15 +239,12 @@ def click():
 mouse = 0
 
 run = True #Indicates pygame is running
-#clock = pygame.time.Clock()
 
 # infinite loop when game is active
 
 while run:
     # iterate over the list of Event objects
     # that was returned by pygame.event.get() method.
-
-    #clock.tick(60)
 
     for event in pygame.event.get():
         # if event object type is QUIT
@@ -268,18 +258,12 @@ while run:
             if event.button == 1 and rock_collected > 0:
                 fire_projectile()
                 rock_collected -= 1
- 
-    #spawn_timer -= 1
-    #if spawn_timer <= 0:
-        #create_monster()
-        #spawn_timer = spawn_delay
 
     projectile = move_projectiles()
 
     mousey = click()
     if mousey == math.floor(ymonster1) or mousey == math.floor(ymonster2)  or mousey == math.floor(ymonster3) :
         print(mousey)
-    #check_collisions()
 
 #screen setup
     win.blit(bg, (0,0))
