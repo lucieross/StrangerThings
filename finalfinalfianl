@@ -267,11 +267,8 @@ while run:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1 and rock_collected > 0:
                 fire_projectile()
-                rock_collected - 1
-                print(rock_collected)
-
-                
-   
+                rock_collected -= 1
+ 
     #spawn_timer -= 1
     #if spawn_timer <= 0:
         #create_monster()
