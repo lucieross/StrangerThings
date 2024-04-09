@@ -26,37 +26,19 @@ cannon_skin = pygame.image.load('Image/cannon.png')
 dog_skin = pygame.image.load('Image/dog.png')
 demo_skin = pygame.image.load('Image/demo.png')
 eggo_skin = pygame.image.load('Image/eggo.png')
-rock_image = pygame.image.load("Image/rock.png")
-Eleven_image = pygame.image.load("Image/Eleven.png")
-
-#Draw MAIN
-def redrawGameWindow():
-    win.blit(bg, (0,0))
-
-    text = font.render('Score: ' + str(score), 1,(0,255,0))
-    win.blit(text, (0,0))
-
-    pygame.draw.line(win, (255, 255, 255), [0, cannon_height], [win_width, cannon_height], 5)
-
-    draw_projectiles()
-
-    pygame.display.update()
 
 #General Variables
-
+lifecount = 3
 killcount = 0
+monsterwall = False
+rock_image = pygame.image.load("Image/rock.png")
 ywall = 125
 
 
 #Eleven Varibles
+Eleven_image_path = "Image/Eleven.png"
+Eleven_image = pygame.image.load(Eleven_image_path)
 Eleven_image = pygame.transform.scale(Eleven_image, (50, 50))
-# Initial position of Eleven
-eleven_x = 225
-eleven_y = 75
-Eleven_speed = 1
-#Draw eleven
-def draw_eleven(x, y):
-    win.blit(Eleven_image, (x, y)) #Draw Eleven at the updated position
 
 # Cannon
 cannon_width, cannon_height = 50, 75
@@ -73,8 +55,22 @@ projectile_speed = 8
 # Gravity
 gravity = 0.5
 
-#Projectiles Functions
+# Score
+score = 0
 
+# Initial position of Eleven
+eleven_x = 225
+eleven_y = 75
+Eleven_speed = 2
+
+#Rock Variables
+xrock = random.randint(10,490)
+yrock = 0
+rocklist = []
+rock_speed = 1.5
+rock_collected = 0
+
+#Projectiles Functions
 def fire_projectile():
     mouse_x, mouse_y = pygame.mouse.get_pos()
     angle = math.atan2(mouse_y - cannon_y, mouse_x - (cannon_x + cannon_width / 2))
@@ -95,17 +91,11 @@ def move_projectiles():
         projectile[1] += projectile[3]
         projectile[3] += gravity  # Apply gravity
 
+#Draw eleven
+def draw_eleven(x, y):
+    win.blit(Eleven_image, (x, y)) #Draw Eleven at the updated position
 
-# Score
-score = 0
-
-#Rock functions and variables
-xrock = random.randint(10,490)
-yrock = 0
-rocklist = []
-rock_speed = 1
-rock_collected = 0
-
+#Rock functions
 def create_rock():
     scaled_rock = pygame.transform.scale(rock_image, (20, 20))
     win.blit(scaled_rock, (xrock, yrock))
@@ -119,13 +109,14 @@ def create_eggo():
  
     return eggo
 
+#Rock list
 rocklist = [0,0,0,0,0,0,0,0,0,0]
 eggoPosition = random.randint(0,9) # 1 eggo and 9 rocks in list
 rocklist[eggoPosition] = 1
 collectedEggo = False
 rocklistPosition = 0
 
-#Monster variables and functions
+#Monster list
 monsterlist1 = [0, 0, 0, 0, 0]
 demogorgonPosition1 = random.randint(0,4) #4 normal monsters and 1 demogorgon in list
 monsterlist1[demogorgonPosition1] = 1
@@ -144,16 +135,18 @@ monsterlist3[demogorgonPosition3] = 1
 ifDemogorgon = False
 monsterlistPosition3 = 0
 
+#Monster Variables
 monstertimer1 = 0
 monstertimer2 = 0
 monstertimer3 = 0
-monsterspeed = 1
 
 xmonster1 = random.randint(10,490)
 ymonster1 = 500
 
 def create_monster1():
+    #monster = pygame.draw.rect(win, (0, 0, 255), (xmonster1, ymonster1, 20, 50))
     if monsterlist1[monsterlistPosition1] == 1:
+        #monster = pygame.draw.rect(win, (0, 0, 255), (xmonster1, ymonster1, 50, 50))
         scaled_demo = pygame.transform.scale(demo_skin, (43,60))
         monster = win.blit(scaled_demo, (xmonster1, ymonster1))
     else:
@@ -165,7 +158,9 @@ def create_monster1():
 xmonster2 = random.randint(10,490)
 ymonster2 = 500
 def create_monster2():
+    #monster = pygame.draw.rect(win, (255, 0, 0), (xmonster2, ymonster2, 20, 50))
     if monsterlist2[monsterlistPosition2] == 1:
+        #monster = pygame.draw.rect(win, (255, 0, 0), (xmonster2, ymonster2, 50, 50))
         scaled_demo = pygame.transform.scale(demo_skin, (43,60))
         monster = win.blit(scaled_demo, (xmonster2, ymonster2))
     else:
@@ -177,7 +172,9 @@ def create_monster2():
 xmonster3 = random.randint(10,490)
 ymonster3 = 500
 def create_monster3():
+    #monster = pygame.draw.rect(win, (0, 255, 0), (xmonster3, ymonster3, 20, 50))
     if monsterlist3[monsterlistPosition3] == 1:
+        #monster = pygame.draw.rect(win, (0, 255, 0), (xmonster3, ymonster3, 50, 50))
         scaled_demo = pygame.transform.scale(demo_skin, (43,60))
         monster = win.blit(scaled_demo, (xmonster3, ymonster3)) 
     else:
@@ -191,10 +188,43 @@ ydemogorgon = 500
 def create_demogorgon():
     scaled_demo = pygame.transform.scale(demo_skin, (60,43))
     monster = win.blit(scaled_demo, (xdemogorgon, ydemogorgon))
+    #monster = pygame.draw.rect(win, (0, 255, 0), (xdemogorgon, ydemogorgon, 50, 50))
     return monster
 
-#lives system variables and fiunctions
-lifecount = 3
+#Draw MAIN
+def redrawGameWindow():
+    win.blit(bg, (0,0))
+
+    text = font.render('Score: ' + str(score), 1,(0,255,0))
+    win.blit(text, (0,0))
+
+    pygame.draw.line(win, (255, 255, 255), [0, cannon_height], [win_width, cannon_height], 5)
+
+    draw_projectiles()
+
+    pygame.display.update()
+
+def check_collisions():
+    global monsterlist1, monsterlist2, monsterlist3, projectiles
+    for monster in monsterlist1[:]:
+        for projectile in projectiles[:]:
+            if monster.colliderect(pygame.Rect(projectile[0] - projectile_radius, projectile[1] - projectile_radius, projectile_radius * 2, projectile_radius * 2)):
+                monsterlist1.remove(monster)
+                projectiles.remove(projectile)
+                killcount += 1
+    for monster in monsterlist2[:]:
+        for projectile in projectiles[:]:
+            if monster.colliderect(pygame.Rect(projectile[0] - projectile_radius, projectile[1] - projectile_radius, projectile_radius * 2, projectile_radius * 2)):
+                monsterlist2.remove(monster)
+                projectiles.remove(projectile)
+                killcount += 1
+    for monster in monsterlist3[:]:
+        for projectile in projectiles[:]:
+            if monster.colliderect(pygame.Rect(projectile[0] - projectile_radius, projectile[1] - projectile_radius, projectile_radius * 2, projectile_radius * 2)):
+                monsterlist3.remove(monster)
+                projectiles.remove(projectile)
+                killcount += 1
+
 
 # Function to display a 'game over' text for a few seconds
 def show_game_over():
@@ -203,17 +233,6 @@ def show_game_over():
     win.blit(game_over_text, text_rect)
     pygame.display.flip()
     pygame.time.delay(3000)
-
-#Levels system   
-
-level = 1
-
-if level == 1 or level == 2:
-    monsterspeed = 0.3
-elif level == 3 or level == 4:
-    monsterspeed = 1.5
-elif level == 5:
-    monsterspeed = 1.75
 
 # Function to display a 'you won' text if game is finished
 def show_you_won():
@@ -231,12 +250,15 @@ def level_is_completed():
     pygame.display.flip()
     pygame.time.delay(3000)   
 
-# test
-def click():
-    mouse_x, mouse_y = pygame.mouse.get_pos()
-    return mouse_y
+#Level
+level = 3
 
-mouse = 0
+if level == 1 or level == 2:
+    monsterspeed = 1
+elif level == 3 or level == 4:
+    monsterspeed = 1.5
+elif level == 5:
+    monsterspeed = 1.75
 
 run = True #Indicates pygame is running
 
@@ -245,6 +267,8 @@ run = True #Indicates pygame is running
 while run:
     # iterate over the list of Event objects
     # that was returned by pygame.event.get() method.
+
+
 
     for event in pygame.event.get():
         # if event object type is QUIT
@@ -258,12 +282,9 @@ while run:
             if event.button == 1 and rock_collected > 0:
                 fire_projectile()
                 rock_collected -= 1
+    
+    move_projectiles()
 
-    projectile = move_projectiles()
-
-    mousey = click()
-    if mousey == math.floor(ymonster1) or mousey == math.floor(ymonster2)  or mousey == math.floor(ymonster3) :
-        print(mousey)
 
 #screen setup
     win.blit(bg, (0,0))
@@ -291,7 +312,6 @@ while run:
 # Render text for life counter
     life_text = font.render("Lives: " + str(lifecount), True, (255, 255, 255))
     win.blit(life_text, (425,20))
-
 
 # Check for rock collection
     if rocklist[rocklistPosition] == 0:
@@ -351,19 +371,110 @@ while run:
 
     if ymonster1 >= 126 and monstertimer1 <= 375:
         monster1 = create_monster1()
-        ymonster1 -= monsterspeed  # later, do this as - level speed
-        monstertimer1 += 0.1 # takes approx. 375 to get to line
-        monstertimer2 += 0.1
-        monstertimer3 += 0.1
+        ymonster1 -= monsterspeed
+        monstertimer1 += monsterspeed
+        monstertimer2 += monsterspeed
+        monstertimer3 += monsterspeed
 
     else:
         ymonster1 = 500
         xmonster1 = random.randint(10,490)
         monstertimer1 = 0
+        print(ymonster1)
 
     if math.floor(ymonster1) == ywall:
         monsterlistPosition1 += 1
         lifecount -= 1
+
+    
+# Monster 2 spawn
+
+    if ymonster2 >= 126 and monstertimer2 >= 187.5 and level >= 3 and level <= 4 or ymonster2 >= 126 and monstertimer2 >= 125 and level == 5: #monster timer being different for different levels allows monsters to be evenly spaced
+        monster2 = create_monster2() 
+        ymonster2 -= monsterspeed
+    else:
+        ymonster2 = 500
+        xmonster2 = random.randint(10,490)
+
+    if math.floor(ymonster2) == ywall:
+            monsterlistPosition2 += 1
+            lifecount -= 1
+        
+
+# Monster 3 spawn
+
+    if ymonster3 >= 126 and monstertimer3 >= 250 and level == 5:
+        monster3 = create_monster3() 
+        ymonster3 -= monsterspeed
+    else:
+        ymonster3 = 500
+        xmonster3 = random.randint(10,490)
+
+    if math.floor(ymonster3) == ywall:
+            monsterlistPosition3 += 1
+            lifecount -= 1
+        
+
+#Reset List
+
+    if monsterlistPosition1 == 4: #resets list when the end is reached
+        monsterlist1 = [0, 0, 0, 0, 0]
+        demogorgonPosition1 = random.randint(0,4) #4 normal monsters and 1 demogorgon in list
+        monsterlist1[demogorgonPosition1] = 1
+        monsterlistPosition1 = 0
+
+
+    if monsterlistPosition2 == 4: #resets list when the end is reached
+        monsterlist2 = [0, 0, 0, 0, 0]
+        demogorgonPosition2 = random.randint(0,4) #4 normal monsters and 1 demogorgon in list
+        monsterlist2[demogorgonPosition2] = 1
+        monsterlistPosition2 = 0
+
+
+    if monsterlistPosition3 == 4: #resets list when the end is reached
+        monsterlist3 = [0, 0, 0, 0, 0]
+        demogorgonPosition3 = random.randint(0,4) #4 normal monsters and 1 demogorgon in list
+        monsterlist3[demogorgonPosition3] = 1
+        monsterlistPosition3 = 0
+
+
+#moving eleven
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_a] and eleven_x - Eleven_speed > 0:  
+        eleven_x -= Eleven_speed
+    if keys[pygame.K_d] and eleven_x + Eleven_speed + 50 < win_width: 
+        eleven_x += Eleven_speed
+
+    draw_eleven(eleven_x, eleven_y)  
+
+# Changing levels
+    if (killcount > 0) & (killcount % (level*5) == 0):
+        #if game is finished, display a you won text then reset the game
+        if level == 5:
+            show_you_won()
+            lifecount = 3
+            killcount = 0
+            rock_collected = 0
+            level = 1
+
+        level_is_completed()
+        level += 1
+        lifecount += 1
+        killcount = 0 
+
+# Resets the game 
+    if lifecount<=0:
+        show_game_over()
+        lifecount = 3
+        killcount = 0
+        rock_collected = 0
+        level = 1
+
+# Refresh the window
+    pygame.display.update()
+pygame.quit()
+
 
     
 # Monster 2 spawn
